@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 
 namespace Minx.SharpService.Server
@@ -8,6 +9,8 @@ namespace Minx.SharpService.Server
         static void Main(string[] args)
         {
             var service = new SharpService("*:80");
+
+            service.RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
             service.Reported += (s, e) =>
             {

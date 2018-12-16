@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Reflection;
 
 namespace Minx.SharpService
 {
@@ -8,11 +9,15 @@ namespace Minx.SharpService
         private HttpServer http;
         private ScriptEnvironment scriptEnvironment;
 
+        public RequestHandlersRegister RequestHandlers { get; private set; } = new RequestHandlersRegister();
+
         public event EventHandler<ReportedEventArgs> Reported;
 
         public SharpService(string netInterface, object globals)
         {
             InitServer(netInterface);
+
+            RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
             scriptEnvironment = new ScriptEnvironment(globals);
         }
@@ -20,6 +25,8 @@ namespace Minx.SharpService
         public SharpService(string netInterface)
         {
             InitServer(netInterface);
+
+            RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
             scriptEnvironment = new ScriptEnvironment();
         }
@@ -47,7 +54,7 @@ namespace Minx.SharpService
 
             try
             {
-                var handler = RequestHandlersRegister.GetHandler(context);
+                var handler = RequestHandlers.GetHandler(context);
                 handler.InternalProcessRequest(context, scriptEnvironment);
             }
             catch (InvalidOperationException e)

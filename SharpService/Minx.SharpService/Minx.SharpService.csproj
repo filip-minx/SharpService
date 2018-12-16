@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="index.html" />
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\interactive.html" />
+    <None Remove="index.html" />
   </ItemGroup>
 
   <ItemGroup>
