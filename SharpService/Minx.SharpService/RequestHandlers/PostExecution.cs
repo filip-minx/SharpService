@@ -9,11 +9,12 @@ namespace Minx.SharpService.RequestHandlers
 
         protected override void ProcessRequest(HttpListenerContext context, ScriptEnvironment script)
         {
-            var code = new StreamReader(context.Request.InputStream).ReadToEnd();
+
+            var code = HttpServer.ReadRequestText(context.Request);
 
             var result = script.Execute(code);
 
-            HttpServer.SetResponseData(context.Response, result);
+            HttpServer.SetResponseText(context.Response, "text/html", result);
         }
     }
 }

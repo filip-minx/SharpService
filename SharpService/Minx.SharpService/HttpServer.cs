@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,15 +62,30 @@ namespace Minx.SharpService
             }
         }
 
-        public static void SetResponseData(HttpListenerResponse response, string data)
+        public static void SetResponseText(HttpListenerResponse response, string responseType, string text)
         {
-            var bytes = Encoding.UTF8.GetBytes(data);
+            var bytes = Encoding.UTF8.GetBytes(text);
 
-            response.Headers.Add(HttpResponseHeader.ContentType, "text/html; charset=utf-8");
-            response.ContentLength64 = data.Length;
+            SetResponseBytes(response, responseType, bytes);
+        }
 
-            var output = response.OutputStream;
-            output.Write(bytes, 0, bytes.Length);
+        public static void SetResponseBytes(HttpListenerResponse response, string responseType, byte[] bytes)
+        {
+            response.Headers.Add(HttpResponseHeader.ContentType, responseType + "; charset=utf-8");
+
+            if (bytes != null)
+            {
+                response.ContentLength64 = bytes.LongLength;
+                response.OutputStream.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        public static string ReadRequestText(HttpListenerRequest request)
+        {
+            using (var reader = new StreamReader(request.InputStream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         void IDisposable.Dispose()

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using System.Diagnostics;
 
 namespace Minx.SharpService
 {
@@ -12,7 +13,7 @@ namespace Minx.SharpService
         {
             var task = CSharpScript.RunAsync(
                 code: "",
-                options: ScriptOptions.Default,
+                options: GetOptions(),
                 globals: globals,
                 globalsType: globals.GetType());
 
@@ -25,7 +26,7 @@ namespace Minx.SharpService
         {
             var task = CSharpScript.RunAsync(
                 code: "",
-                options: ScriptOptions.Default);
+                options: GetOptions());
 
             task.Wait();
 
@@ -48,6 +49,12 @@ namespace Minx.SharpService
             {
                 return e.Message;
             }
+        }
+
+        private ScriptOptions GetOptions()
+        {
+            return ScriptOptions.Default
+                .WithReferences(typeof(Process).Assembly);
         }
     }
 }

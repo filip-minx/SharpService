@@ -4,51 +4,29 @@ using System.Reflection;
 
 namespace Minx.SharpService
 {
-    public class SharpService : IDisposable
+    public class SharpService : IHttpService
     {
-        private HttpServer http;
         private ScriptEnvironment scriptEnvironment;
 
         public RequestHandlersRegister RequestHandlers { get; private set; } = new RequestHandlersRegister();
 
         public event EventHandler<ReportedEventArgs> Reported;
 
-        public SharpService(string netInterface, object globals)
+        public SharpService(object globals)
         {
-            InitServer(netInterface);
-
             RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
             scriptEnvironment = new ScriptEnvironment(globals);
         }
 
-        public SharpService(string netInterface)
+        public SharpService()
         {
-            InitServer(netInterface);
-
             RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
             scriptEnvironment = new ScriptEnvironment();
         }
-
-        private void InitServer(string netInterface)
-        {
-            var prefixes = GetPrefixes(netInterface);
-            http = new HttpServer(prefixes);
-            http.Start();
-        }
-
-        private string GetPrefixes(string netInterface)
-        {
-            return $"http://{netInterface}/sharpservice/";
-        }
-
-        public void ProcessRequests()
-        {
-            http.ProcessRequests(ProcessRequest);
-        }
-
-        private void ProcessRequest(HttpListenerContext context)
+        
+        public void ProcessRequest(HttpListenerContext context)
         {
             ReportRequest(context.Request);
 
@@ -64,7 +42,7 @@ namespace Minx.SharpService
                 Report(msg, ReportLevel.Error);
 
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                HttpServer.SetResponseData(context.Response, msg);
+                HttpServer.SetResponseText(context.Response, "text/html", msg);
             }
         }
 
@@ -76,11 +54,6 @@ namespace Minx.SharpService
         private void Report(string message, ReportLevel level = ReportLevel.Informational)
         {
             Reported?.Invoke(this, new ReportedEventArgs(message, level));
-        }
-
-        public void Dispose()
-        {
-            ((IDisposable)http).Dispose();
         }
     }
 }

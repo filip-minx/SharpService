@@ -53,7 +53,7 @@ namespace Minx.SharpService
         {
             var regexPattern = Regex.Replace(urlPattern, @"{(\w+)}", @"(?<$1>\w+)");
 
-            return new Regex($"^{regexPattern}$");
+            return new Regex($"^{regexPattern}$", RegexOptions.IgnoreCase);
         }
     }
 }

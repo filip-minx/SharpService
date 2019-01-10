@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 
 namespace Minx.SharpService.Server
@@ -8,18 +7,31 @@ namespace Minx.SharpService.Server
     {
         static void Main(string[] args)
         {
-            var service = new SharpService("*:80");
+            var serviceServer = new HttpServiceServer("*:80");
 
-            service.RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
-
-            service.Reported += (s, e) =>
+            serviceServer.Reported += (s, e) =>
             {
-                Console.WriteLine($"{e.Level}: {e.Message}");
+                if (e.Level != ReportLevel.Informational)
+                {
+                    Console.Write($"{e.Level}: ");
+                }
+                
+                Console.WriteLine($"{e.Message}");
             };
+
+            var resourceService = new FileService()
+            {
+                RootPath = "Resources"
+            };
+
+            resourceService.AddUrlRedirection("/", "/interactive.html");
+
+            serviceServer.AddService("/sharpservice", new SharpService());
+            serviceServer.AddService("/", resourceService);
 
             while (true)
             {
-                service.ProcessRequests();
+                serviceServer.ProcessRequests();
                 Thread.Sleep(1);
             }
         }
