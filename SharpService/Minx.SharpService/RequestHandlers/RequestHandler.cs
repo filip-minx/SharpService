@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 
-namespace Minx.SharpService
+namespace Minx.SharpService.RequestHandlers
 {
     public abstract class RequestHandler
     {

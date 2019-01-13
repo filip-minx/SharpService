@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Net;
+﻿using System.Net;
 
 namespace Minx.SharpService.RequestHandlers
 {
