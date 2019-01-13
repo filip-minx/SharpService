@@ -41,40 +41,63 @@ namespace Minx.SharpService.Server
 
         private void ProcessGetRequest(HttpListenerContext context)
         {
-            var url = ResolveUrl(context.Request.Url.AbsolutePath);
-            var mimeType = MimeUtility.GetMimeMapping(url);
-            
-            if (!IsSubPath(RootPath, url))
+            if (TryRedirectUrl(context.Response, context.Request.Url.AbsolutePath, out var targetUrl))
             {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                HttpServer.SetResponseText(context.Response, mimeType, "Access denied.");
                 return;
             }
 
-            byte[] responseBytes = null;
+            targetUrl = ResolveUrlRoot(targetUrl);
 
-            if (File.Exists(url))
+            if (!ValidateAccess(context.Response, targetUrl))
             {
-                responseBytes = File.ReadAllBytes(url);
+                return;
+            }
+
+            if (File.Exists(targetUrl))
+            {
+                var mimeType = MimeUtility.GetMimeMapping(targetUrl);
+                var responseBytes = File.ReadAllBytes(targetUrl);
+
+                HttpServer.SetResponseBytes(context.Response, mimeType, responseBytes);
             }
             else
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
-
-            HttpServer.SetResponseBytes(context.Response, mimeType, responseBytes);
         }
 
-        private string ResolveUrl(string url)
+        private bool ValidateAccess(HttpListenerResponse response, string url)
         {
-            if (UrlRedirections.TryGetValue(url, out var redirectedUrl))
+            if (!IsSubPath(RootPath, url))
             {
-                url = redirectedUrl;
+                var mimeType = MimeUtility.GetMimeMapping(url);
+
+                response.StatusCode = (int)HttpStatusCode.Forbidden;
+                HttpServer.SetResponseText(response, mimeType, "Access denied.");
+                return false;
             }
 
-            url = RootPath + url;
+            return true;
+        }
 
-            return url;
+        private bool TryRedirectUrl(HttpListenerResponse response, string url, out string redirectedUrl)
+        {
+            if (UrlRedirections.TryGetValue(url, out redirectedUrl))
+            {
+                response.Redirect(redirectedUrl);
+                response.Close();
+                return true;
+            }
+            else
+            {
+                redirectedUrl = url;
+                return false;
+            }
+        }
+
+        private string ResolveUrlRoot(string url)
+        {
+            return RootPath + url;
         }
 
         private static bool IsSubPath(string rootPath, string subPath)
