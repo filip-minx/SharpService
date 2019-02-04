@@ -8,7 +8,7 @@ namespace Minx.SharpService.RequestHandlers
 {
     public abstract class RequestHandler
     {
-        public abstract string UrlPattern { get; }
+        public abstract string Route { get; }
         public abstract HttpMethod HttpMethod { get; }
 
         public Regex UrlRegex { get; }
@@ -46,7 +46,7 @@ namespace Minx.SharpService.RequestHandlers
 
         public RequestHandler()
         {
-            UrlRegex = CreateRegex(UrlPattern);
+            UrlRegex = CreateRegex(Route);
         }
 
         private Regex CreateRegex(string urlPattern)
