@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Minx.SharpService
@@ -8,6 +9,10 @@ namespace Minx.SharpService
     public class ScriptEnvironment
     {
         private ScriptState scriptState;
+
+        private List<ScriptExecution> executions = new List<ScriptExecution>();
+
+        public IReadOnlyList<ScriptExecution> Executions => executions;
 
         public ScriptEnvironment(object globals)
         {
@@ -33,8 +38,10 @@ namespace Minx.SharpService
             scriptState = task.Result;
         }
 
-        public string Execute(string code)
+        public ScriptExecution Execute(string code)
         {
+            var execution = CreateExecution(code);
+
             try
             {
                 var task = scriptState.ContinueWithAsync(code);
@@ -43,12 +50,28 @@ namespace Minx.SharpService
 
                 scriptState = task.Result;
 
-                return task.Result.ReturnValue?.ToString() ?? "[no result]";
+                execution.Result = task.Result.ReturnValue?.ToString() ?? "[no result]";
             }
             catch (Exception e)
             {
-                return e.Message;
+                execution.Result = e.Message;
+                execution.Error = true;
             }
+
+            return execution;
+        }
+
+        private ScriptExecution CreateExecution(string code)
+        {
+            var execution = new ScriptExecution()
+            {
+                Code = code,
+                Id = executions.Count
+            };
+
+            executions.Add(execution);
+
+            return execution;
         }
 
         private ScriptOptions GetOptions()

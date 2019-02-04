@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json;
+using System.Net;
 
 namespace Minx.SharpService.RequestHandlers
 {
@@ -8,12 +9,15 @@ namespace Minx.SharpService.RequestHandlers
 
         protected override void ProcessRequest(HttpListenerContext context, ScriptEnvironment script)
         {
+            var requestText = HttpServer.ReadRequestText(context.Request);
 
-            var code = HttpServer.ReadRequestText(context.Request);
+            var executionRequest = JsonConvert.DeserializeObject<ScriptExecution>(requestText);
 
-            var result = script.Execute(code);
+            var executionResult = script.Execute(executionRequest.Code);
 
-            HttpServer.SetResponseText(context.Response, "text/html", result);
+            var resultJson = JsonConvert.SerializeObject(executionResult);
+
+            HttpServer.SetResponseText(context.Response, "application/json", resultJson);
         }
     }
 }

@@ -106,12 +106,17 @@
 			});
 
 			function PostExecution() {
-				var code = editor.getValue();
+				
+				var requestObject = {
+					Code: editor.getValue()
+				};
+
 				editor.setValue("");
 
-				$.post(root + "executions", code, function (data) {
-					console.log(data);
-					$("#output-text").append(data + "\n");
+				$.post(root + "executions", JSON.stringify(requestObject), function (execution) {
+					console.log(execution);
+
+					$("#output-text").append(execution.Result + "\n");
 					$("#output-text").scrollTop($("#output-text")[0].scrollHeight);
 				});
 			}
