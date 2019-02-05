@@ -44,13 +44,17 @@ namespace Minx.SharpService
 
             try
             {
-                var task = scriptState.ContinueWithAsync(code);
+                using (var interceptor = ConsoleInterceptor.Get())
+                {
+                    var task = scriptState.ContinueWithAsync(code);
 
-                task.Wait();
+                    task.Wait();
 
-                scriptState = task.Result;
+                    scriptState = task.Result;
 
-                execution.Result = task.Result.ReturnValue?.ToString() ?? "[no result]";
+                    execution.Result = task.Result.ReturnValue?.ToString() ?? "[no result]";
+                    execution.ConsoleOutput = interceptor.OutputText;
+                }
             }
             catch (Exception e)
             {

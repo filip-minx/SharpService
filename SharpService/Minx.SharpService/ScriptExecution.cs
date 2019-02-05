@@ -8,6 +8,8 @@
 
         public string Result { get; set; }
 
-        public bool Error { get; set; }        
+        public bool Error { get; set; }      
+        
+        public string ConsoleOutput { get; set; }
     }
 }
