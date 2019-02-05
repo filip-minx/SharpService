@@ -87,13 +87,28 @@
 
 		<script type="text/javascript">
 
+			$(window).keyup(function (e) {
+				// Prevents context menu "Alt" shortcut in chrome.
+
+				if (e.keyCode == 18) {
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				}
+			});
+
+			var executions = [];
+			var pastedExecutionIndex = null;
+
 			var editor = CodeMirror.fromTextArea($("#input-text")[0], {
 		        lineNumbers: true,
 		        theme: "lesser-dark",
 		        mode: "text/x-csharp",
 		        height: "auto",
 		        extraKeys : {
-		        	"Ctrl-Enter" : PostExecution
+					"Alt-Enter": postExecution,
+					"Alt-Up": pastePreviousExecution,
+					"Alt-Down": pasteNextExecution
 		        }
 		      });
 
@@ -102,28 +117,78 @@
 			var root = "http://" + window.location.hostname + "/SharpService/"
 
 			$("#submit-button").click(function() {
-				PostExecution();
+				postExecution();
 			});
 
-			function PostExecution() {
-				
+			function postExecution() {
+
+				var code = editor.getValue();
+
+				if ($.trim(code).length === 0) return;
+
 				var requestObject = {
-					Code: editor.getValue()
+					Code: code
 				};
 
 				editor.setValue("");
+				pastedExecutionIndex = null;
 
 				$.post(root + "executions", JSON.stringify(requestObject), function (execution) {
 					console.log(execution);
+					executions.push(execution);
 
 					$("#output-text").append(execution.Result + "\n");
 					$("#output-text").scrollTop($("#output-text")[0].scrollHeight);
 				});
 			}
+
+			function pastePreviousExecution() {
+
+				if (executions.length == 0) return;
+
+				if (pastedExecutionIndex === null) {
+
+					pastedExecutionIndex = executions.length - 1;
+				}
+				else {
+
+					if (pastedExecutionIndex > 0) {
+						pastedExecutionIndex--;
+					}
+				}
+
+				var execution = executions[pastedExecutionIndex];
+
+				editor.setValue(execution.Code);
+				setEditorCursotToEnd();
+			}
+
+			function pasteNextExecution() {
+
+				if (executions.length == 0) return;
+
+				if (pastedExecutionIndex !== null
+					&& pastedExecutionIndex < executions.length - 1) {
+
+					pastedExecutionIndex++;
+				}
+				else {
+
+					pastedExecutionIndex = null;
+					editor.setValue("");
+					return;
+				}
+				
+				var execution = executions[pastedExecutionIndex];
+				editor.setValue(execution.Code);
+				setEditorCursotToEnd();
+			}
+
+			function setEditorCursotToEnd() {
+				editor.focus();
+				editor.setCursor(editor.lineCount(), 0);
+			}
 			
 		</script>
-
 	</body>
-
-
 </html>
