@@ -137,7 +137,7 @@
 					console.log(execution);
 					executions.push(execution);
 
-					$("#output-text").append(execution.Result + "\n");
+					$("#output-text").append(escapeHtml(execution.Result) + "\n");
 					$("#output-text").scrollTop($("#output-text")[0].scrollHeight);
 				});
 			}
@@ -187,6 +187,15 @@
 			function setEditorCursotToEnd() {
 				editor.focus();
 				editor.setCursor(editor.lineCount(), 0);
+			}
+
+			function escapeHtml(html) {
+				return html
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
 			}
 			
 		</script>
