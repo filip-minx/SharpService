@@ -3,6 +3,11 @@ using System.Threading;
 
 namespace Minx.SharpService.Server
 {
+    public class Globals
+    {
+        public ScriptEnvironmentGlobals Script { get; set; } = new ScriptEnvironmentGlobals();
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -26,7 +31,11 @@ namespace Minx.SharpService.Server
 
             resourceService.AddUrlRedirection("/", "/interactive.html");
 
-            serviceServer.AddService("/sharpservice", new SharpService());
+            var globals = new Globals();
+            var sharpService = new SharpService(globals);
+            globals.Script.ScriptEnvironment = sharpService.ScriptEnvironment;
+
+            serviceServer.AddService("/sharpservice", sharpService);
             serviceServer.AddService("/", resourceService);
 
             while (true)
