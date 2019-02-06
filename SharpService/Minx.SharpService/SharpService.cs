@@ -6,7 +6,7 @@ namespace Minx.SharpService
 {
     public class SharpService : IHttpService
     {
-        private ScriptEnvironment scriptEnvironment;
+        public ScriptEnvironment ScriptEnvironment { get; private set; }
 
         public RequestHandlersRegister RequestHandlers { get; private set; } = new RequestHandlersRegister();
 
@@ -16,14 +16,14 @@ namespace Minx.SharpService
         {
             RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
-            scriptEnvironment = new ScriptEnvironment(globals);
+            ScriptEnvironment = new ScriptEnvironment(globals);
         }
 
         public SharpService()
         {
             RequestHandlers.LoadHandlersFromAssembly(Assembly.GetExecutingAssembly());
 
-            scriptEnvironment = new ScriptEnvironment();
+            ScriptEnvironment = new ScriptEnvironment();
         }
         
         public void ProcessRequest(HttpListenerContext context)
@@ -33,7 +33,7 @@ namespace Minx.SharpService
             try
             {
                 var handler = RequestHandlers.GetHandler(context);
-                handler.InternalProcessRequest(context, scriptEnvironment);
+                handler.InternalProcessRequest(context, ScriptEnvironment);
             }
             catch (InvalidOperationException e)
             {

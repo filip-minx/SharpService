@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 
 namespace Minx.SharpService
 {
@@ -14,13 +16,15 @@ namespace Minx.SharpService
 
         public IReadOnlyList<ScriptExecution> Executions => executions;
 
+        public ScriptOptions ScriptOptions { get; set; } = ScriptOptions.Default
+            .WithReferences(typeof(Process).Assembly);
+
         public ScriptEnvironment(object globals)
         {
             var task = CSharpScript.RunAsync(
                 code: "",
-                options: GetOptions(),
-                globals: globals,
-                globalsType: globals.GetType());
+                options: ScriptOptions,
+                globals: globals);
 
             task.Wait();
 
@@ -31,11 +35,16 @@ namespace Minx.SharpService
         {
             var task = CSharpScript.RunAsync(
                 code: "",
-                options: GetOptions());
+                options: ScriptOptions);
 
             task.Wait();
 
             scriptState = task.Result;
+        }
+
+        public void AddReference(Assembly assembly)
+        {
+            ScriptOptions = ScriptOptions.WithReferences(assembly);
         }
 
         public ScriptExecution Execute(string code)
@@ -46,7 +55,9 @@ namespace Minx.SharpService
             {
                 using (var interceptor = ConsoleInterceptor.Get())
                 {
-                    var task = scriptState.ContinueWithAsync(code);
+                    var task = scriptState.ContinueWithAsync(
+                        code: code,
+                        options: ScriptOptions);
 
                     task.Wait();
 
@@ -58,7 +69,25 @@ namespace Minx.SharpService
             }
             catch (Exception e)
             {
-                execution.Result = e.Message;
+                if (e is AggregateException aggregateException)
+                {
+                    var messageBuilder = new StringBuilder();
+
+                    messageBuilder.AppendLine($"AggregateException: {aggregateException.Message}");
+
+                    aggregateException.Handle((inner) =>
+                    {
+                        messageBuilder.AppendLine($" - {inner.GetType().Name}: {inner.Message}");
+                        return true;
+                    });
+
+                    execution.Result = messageBuilder.ToString();
+                }
+                else
+                {
+                    execution.Result = e.Message;
+                }
+
                 execution.Error = true;
             }
 
@@ -76,12 +105,6 @@ namespace Minx.SharpService
             executions.Add(execution);
 
             return execution;
-        }
-
-        private ScriptOptions GetOptions()
-        {
-            return ScriptOptions.Default
-                .WithReferences(typeof(Process).Assembly);
-        }
+        }   
     }
 }
