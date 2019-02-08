@@ -17,7 +17,17 @@ namespace Minx.SharpService
         public IReadOnlyList<ScriptExecution> Executions => executions;
 
         public ScriptOptions ScriptOptions { get; set; } = ScriptOptions.Default
-            .WithReferences(typeof(Process).Assembly);
+            .WithReferences(typeof(Process).Assembly)
+            .WithImports(new string[]
+            {
+                "System",
+                "System.Collections.Generic",
+                "System.Linq",
+                "System.Text",
+                "System.Threading.Tasks",
+                "System.Diagnostics",
+                "System.Math"
+            });
 
         public ScriptEnvironment(object globals)
         {
