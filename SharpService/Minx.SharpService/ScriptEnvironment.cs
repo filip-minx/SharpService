@@ -74,7 +74,7 @@ namespace Minx.SharpService
                     scriptState = task.Result;
 
                     execution.Result = task.Result.ReturnValue?.ToString() ?? "[no result]";
-                    execution.ConsoleOutput = interceptor.OutputText;
+                    execution.StandardOutput = interceptor.OutputText;
                 }
             }
             catch (Exception e)

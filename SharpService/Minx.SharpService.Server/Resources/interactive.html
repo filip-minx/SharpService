@@ -28,9 +28,18 @@
 
 			#output {
 				position: absolute;
-				width: 100%;
+				width: 50%;
 				height: 60%;
 				background-color: #1c1c1c;
+			}
+
+			#console {
+				position: absolute;
+				left: 50%;
+				width: calc(50% - 2px);
+				height: 60%;
+				background-color: #1c1c1c;
+				border-left: 2px solid #262626;
 			}
 
 			#input {
@@ -69,6 +78,14 @@
 				background: transparent;
 				padding: 5px;
 			}
+
+			#console-text {
+				position: absolute;
+				height: calc(100% - 10px);
+				width: calc(100% - 10px);
+				background: transparent;
+				padding: 5px;
+			}
 		</style>
 
 		
@@ -78,9 +95,13 @@
 		<div id="output">
 			<textarea id="output-text" readonly></textarea>
 		</div>
-		
+
+		<div id="console">
+			<textarea id="console-text" readonly></textarea>
+		</div>
+
 		<div id="input">
-			<textarea id="input-text" name="inputCode"></textarea>	
+			<textarea id="input-text" name="inputCode"></textarea>
 		</div>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -101,22 +122,22 @@
 			var pastedExecutionIndex = null;
 
 			var editor = CodeMirror.fromTextArea($("#input-text")[0], {
-		        lineNumbers: true,
-		        theme: "lesser-dark",
-		        mode: "text/x-csharp",
-		        height: "auto",
-		        extraKeys : {
+				lineNumbers: true,
+				theme: "lesser-dark",
+				mode: "text/x-csharp",
+				height: "auto",
+				extraKeys: {
 					"Alt-Enter": postExecution,
 					"Alt-Up": pastePreviousExecution,
 					"Alt-Down": pasteNextExecution
-		        }
-		      });
+				}
+			});
 
 			editor.setSize("100%", "100%");
 
 			var root = "http://" + window.location.hostname + "/SharpService/"
 
-			$("#submit-button").click(function() {
+			$("#submit-button").click(function () {
 				postExecution();
 			});
 
@@ -137,6 +158,11 @@
 					console.log(execution);
 					executions.push(execution);
 
+					if (execution.StandardOutput != null) {
+						$("#console-text").append(escapeHtml(execution.StandardOutput) + "\n");
+						$("#console-text").scrollTop($("#console-text")[0].scrollHeight);
+					}
+					
 					$("#output-text").append(escapeHtml(execution.Result) + "\n");
 					$("#output-text").scrollTop($("#output-text")[0].scrollHeight);
 				});
@@ -178,7 +204,7 @@
 					editor.setValue("");
 					return;
 				}
-				
+
 				var execution = executions[pastedExecutionIndex];
 				editor.setValue(execution.Code);
 				setEditorCursotToEnd();
@@ -197,7 +223,7 @@
 					.replace(/"/g, "&quot;")
 					.replace(/'/g, "&#039;");
 			}
-			
+
 		</script>
 	</body>
 </html>

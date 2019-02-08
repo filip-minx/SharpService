@@ -10,6 +10,6 @@
 
         public bool Error { get; set; }      
         
-        public string ConsoleOutput { get; set; }
+        public string StandardOutput { get; set; }
     }
 }
