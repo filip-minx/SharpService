@@ -1,96 +1,98 @@
 ﻿<!doctype html>
 
 <html>
-	<head>
-		<title>SharpService</title>
+<head>
+	<title>SharpService</title>
 
-		<link rel="stylesheet" type="text/css" href="codemirror-5.42.0/lib/codemirror.css" />
-	    <link rel="stylesheet" type="text/css" href="codemirror-5.42.0/theme/lesser-dark.css" />
-	    <script type="text/javascript" src="codemirror-5.42.0/lib/codemirror.js"></script>
-	    <script type="text/javascript" src="codemirror-5.42.0/mode/clike/clike.js"></script>
+	<link rel="stylesheet" type="text/css" href="codemirror-5.42.0/lib/codemirror.css" />
+	<link rel="stylesheet" type="text/css" href="codemirror-5.42.0/theme/lesser-dark.css" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<script type="text/javascript" src="codemirror-5.42.0/lib/codemirror.js"></script>
+	<script type="text/javascript" src="codemirror-5.42.0/mode/clike/clike.js"></script>
 
-		<style type="text/css">
+	<style type="text/css">
 
-			html, body {height: 100%;}
-			
-			* {
-				color: white;
-				font-family: consolas;
-				border: 0px;
-				margin: 0px;
-				padding: 0px;
-			}
+		html, body {
+			height: 100%;
+		}
 
-			body {
-				margin: 0px;
-				padding: 0px;
-			}
+		* {
+			color: white;
+			font-family: consolas;
+			border: 0px;
+			margin: 0px;
+			padding: 0px;
+		}
 
-			#output {
-				position: absolute;
-				width: 50%;
-				height: 60%;
-				background-color: #1c1c1c;
-			}
+		body {
+			margin: 0px;
+			padding: 0px;
+		}
 
-			#console {
-				position: absolute;
-				left: 50%;
-				width: calc(50% - 2px);
-				height: 60%;
-				background-color: #1c1c1c;
-				border-left: 2px solid #262626;
-			}
+		#output {
+			position: absolute;
+			width: 50%;
+			height: 60%;
+			background-color: #1c1c1c;
+		}
 
-			#input {
-				position: absolute;
-				width: 100%;
-				height: 40%;
-				top: 60%;
-				/*background-color: #383838;*/
-			}
+		#console {
+			position: absolute;
+			left: 50%;
+			width: calc(50% - 2px);
+			height: 60%;
+			background-color: #1c1c1c;
+			border-left: 2px solid #262626;
+		}
 
-			textarea {
-			    border: none;
-			    overflow: auto;
-			    outline: none;
-			    -webkit-box-shadow: none;
-			    -moz-box-shadow: none;
-			    box-shadow: none;
-			    resize: none;
-			}
+		#input {
+			position: absolute;
+			width: 100%;
+			height: 40%;
+			top: 60%;
+			/*background-color: #383838;*/
+		}
 
-			#input-text
-			{
-				position: absolute;
-				left: 50px;
-				height: 100%;
-				margin-left: 10px;
-				width: calc(100% - 60px);
-				background: transparent;
-			}
+		textarea {
+			border: none;
+			overflow: auto;
+			outline: none;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			resize: none;
+		}
 
-			#output-text
-			{
-				position: absolute;
-				height: calc(100% - 10px);
-				width: calc(100% - 10px);
-				background: transparent;
-				padding: 5px;
-			}
+		#input-text {
+			position: absolute;
+			left: 50px;
+			height: 100%;
+			margin-left: 10px;
+			width: calc(100% - 60px);
+			background: transparent;
+		}
 
-			#console-text {
-				position: absolute;
-				height: calc(100% - 10px);
-				width: calc(100% - 10px);
-				background: transparent;
-				padding: 5px;
-			}
-		</style>
+		#output-text {
+			position: absolute;
+			height: calc(100% - 10px);
+			width: calc(100% - 10px);
+			background: transparent;
+			padding: 5px;
+		}
 
-		
+		#console-text {
+			position: absolute;
+			height: calc(100% - 10px);
+			width: calc(100% - 10px);
+			background: transparent;
+			padding: 5px;
+		}
+	</style>
 
-	</head>
+
+
+</head>
 	<body>
 		<div id="output">
 			<textarea id="output-text" readonly></textarea>

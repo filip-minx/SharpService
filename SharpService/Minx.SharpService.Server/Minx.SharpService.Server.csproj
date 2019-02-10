@@ -50,6 +50,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,6 +96,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\favicon.ico" />
     <Content Include="Resources\codemirror-5.42.0\.gitattributes" />
     <Content Include="Resources\codemirror-5.42.0\addon\comment\comment.js" />
     <Content Include="Resources\codemirror-5.42.0\addon\comment\continuecomment.js" />
