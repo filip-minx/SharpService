@@ -110,7 +110,7 @@
 
 		<script type="text/javascript">
 
-			var root = "http://" + window.location.hostname + "/SharpService/"
+			var root = "http://" + window.location.hostname + ":" + window.location.port + "/SharpService/"
 
 			$(window).keyup(function (e) {
 				// Prevents context menu "Alt" shortcut in chrome.
@@ -140,8 +140,6 @@
 			});
 
 			editor.setSize("100%", "100%");
-
-			var root = "http://" + window.location.hostname + "/SharpService/"
 
 			$("#submit-button").click(function () {
 				postExecution();
