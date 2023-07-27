@@ -64,9 +64,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Globals.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileService.cs" />
+    <Compile Include="SharpServiceServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

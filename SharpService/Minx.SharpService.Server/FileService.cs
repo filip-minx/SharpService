@@ -52,8 +52,9 @@ namespace Minx.SharpService.Server
             {
                 return;
             }
-
-            if (File.Exists(targetUrl))
+            var dir = Directory.GetCurrentDirectory();
+            var file = Path.Combine(dir, targetUrl);
+            if (File.Exists(file))
             {
                 var mimeType = MimeUtility.GetMimeMapping(targetUrl);
                 var responseBytes = File.ReadAllBytes(targetUrl);
